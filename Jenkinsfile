@@ -20,7 +20,7 @@ pipeline {
         }
         stage ("build docker image") {
             steps{
-                sh "docker build - t ${iMAGE_NAME} :${BUILD_ID} ."
+                sh "docker build -t ${iMAGE_NAME}:${BUILD_ID} ."
             }
         }  
         stage ("push to docker hub") {
