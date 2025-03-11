@@ -3,7 +3,7 @@ pipeline {
         IMAGE_NAME="camille250/simple-java-app"
         
     }
-    agents any
+    agent any
     tools{
         maven "Maven"
     }
