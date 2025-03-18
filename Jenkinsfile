@@ -1,6 +1,6 @@
-pipeline {
+pipeline{
     environment{
-        IMAGE_NAME="camille250/simple-java-app"
+        IMAGE_NAME="025600686378.dkr.ecr.us-east-2.amazonaws.com/simple-jave-app"
         
     }
     agent any
@@ -23,12 +23,13 @@ pipeline {
                 sh "docker build -t ${iMAGE_NAME}:${BUILD_ID} ."
             }
         }  
-        stage ("push to docker hub") {
+        stage ("push to ECR") {
             steps{
-                withCredentials([usernamePassword(credentialsId: "jenkins-dockerhub-cre", passwordVariable: "PASS",usernameVariable: "USER")]){
-                    sh "echo $PASS |docker login -u $USER --password-stdin" 
+                 steps{
+                    sh "aws ecr get-login-password --region us-east-2 | docker login --username AWS --password-stdin 025600686378.dkr.ecr.us-east-2.amazonaws.com"
+                    sh "docker build -t ${IMAGE_NAME}:${BUILD_ID} ."
                     sh "docker push ${IMAGE_NAME}:${BUILD_ID}"
-                }
+                }        
                          
             }
         }
