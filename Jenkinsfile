@@ -31,7 +31,7 @@ pipeline{
         stage ("push to ECR") {
             steps{
                  script{
-                    docker.withRegistry("https://${ACCOUNT_ID}","ecr:${AWS_REGION}:aws-credentials"){
+                    docker.withRegistry("https://${ACCOUNT_ID}", "ecr:${AWS_REGION}:aws-credentials"){
                         docker.push("${BUILD_ID}")
                     }
                 }        
