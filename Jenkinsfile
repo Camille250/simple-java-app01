@@ -1,7 +1,9 @@
 pipeline{
     environment{
-        IMAGE_NAME="025600686378.dkr.ecr.us-east-2.amazonaws.com/simple-jave-app"
-        
+        IMAGE_NAME="${ACCOUNT_ID}/${REPO_NAME}:${BUILD_ID}"
+        ACCOUNT_ID="585443148081.dkr.ecr.us-east-1.amazonaws.com"
+        AWS_REGION="us-east-1"
+        REPO_NAME="simple-java-app2"        
     }
     agent any
     tools{
@@ -17,13 +19,21 @@ pipeline{
             steps{
                 sh "mvn clean package"       
             }
-        }  
-        stage ("build and push to ECR") {
+        }    
+        stage ("build docker image") {
             steps{
-                 steps{
-                    sh "aws ecr get-login-password --region us-east-2 | docker login --username AWS --password-stdin 025600686378.dkr.ecr.us-east-2.amazonaws.com"
-                    sh "docker build -t ${IMAGE_NAME}:${BUILD_ID} ."
-                    sh "docker push ${IMAGE_NAME}:${BUILD_ID}"
+                script{
+                    docker.build("${IMAGE_NAME}")
+                }
+
+            }
+        }    
+        stage ("push to ECR") {
+            steps{
+                 script{
+                    docker.withRegistry("https://${ACCOUNT_ID}","ecr:${AWS_REGION}:aws-credentials"){
+                        docker.push("${BUILD_ID}")
+                    }
                 }        
                          
             }
